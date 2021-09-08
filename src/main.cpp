@@ -1,11 +1,17 @@
 #include <Arduino.h>
 #include <Joystick.h>
+#include <Bounce2.h>
 
+// button assign const
 const uint8_t joystickButtonCount = 13;
 const uint8_t buttonPin[joystickButtonCount] = {12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0};
 const uint8_t arrowPin[4] = {20, 21, 22, 23};
 const uint8_t lsPin = 14;
 const uint8_t rsPin = 15;
+
+// debounce const
+Bounce debouncer[joystickButtonCount];
+const uint8_t debounceTime = 2;
 
 Joystick_ Joystick = Joystick_(
   JOYSTICK_DEFAULT_REPORT_ID,       // hidReportId 
@@ -26,6 +32,13 @@ Joystick_ Joystick = Joystick_(
 );
 
 void setup() {
+  for (uint8_t i = 0; i < joystickButtonCount; i++) {
+    debouncer[i] = Bounce();
+    debouncer[i].attach(buttonPin[i], INPUT_PULLUP);
+    debouncer[i].interval(debounceTime);
+    debouncer[i].update();
+  }
+
   Joystick.begin();
   Joystick.setXAxisRange(0, 2);
   Joystick.setYAxisRange(0, 2);
@@ -40,5 +53,9 @@ void setup() {
 
 void loop() {
   while(1){
+    for (uint8_t i = 0; i < joystickButtonCount; i++) {
+      debouncer[i].update();
+      Joystick.setButton(i, !debouncer[i].read());
+    }
   }
 }

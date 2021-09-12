@@ -47,8 +47,8 @@ const uint8_t buttonPin[BUTTON_ALL] = {12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0,
 
 // Hatswitch direction Pattern
 const int16_t hatPattern[3][3] = {{315,   0,  45},
-								  {270,  -1,  90},
-								  {225, 180, 135}};
+                                  {270,  -1,  90},
+                                  {225, 180, 135}};
 
 Bounce debouncer[BUTTON_ALL];
 

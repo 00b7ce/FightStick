@@ -1,16 +1,20 @@
 #include <Arduino.h>
 #include <Joystick.h>
 #include <Bounce2.h>
-#include <string.h>
+#include <FastLED.h>
+#include <FlexiTimer2.h>
 
+// Button num
 #define JOYSTICK_BUTTON_COUNT     13  // Normal input button
 #define JOYSTICK_DIRECTIRON_COUNT  4  // Direction input button(up, down, left, right)
 #define JOYSTICK_LAYER_COUNT       2  // Layer button for switching direction input type
 
+// Axis range
 #define AXIS_RANGE_MIN  0
 #define AXIS_RANDE_HOME 1
 #define AXIS_RANGE_MAX  2
 
+// Direction button
 #define DIRECTION_LEFT  (JOYSTICK_BUTTON_COUNT + 0)
 #define DIRECTION_DOWN  (JOYSTICK_BUTTON_COUNT + 1)
 #define DIRECTION_RIGHT (JOYSTICK_BUTTON_COUNT + 2)
@@ -19,7 +23,15 @@
 #define AXIS_X 1
 #define AXIS_Y 0
 
+// Debounce
 #define DEBOUNCE_TIME 2
+
+// LED
+#define NUM_LEDS 20
+#define LED_PIN  16
+#define LED_BRIGHTNESS 33
+#define LED_TYPE WS2813
+#define TIMER_INTERVAL 25
 
 // button assign const
 const uint8_t buttonCount = JOYSTICK_BUTTON_COUNT + JOYSTICK_DIRECTIRON_COUNT + JOYSTICK_LAYER_COUNT;
@@ -53,6 +65,14 @@ Joystick_ Joystick = Joystick_(
 	false                             // includeSteering
 );
 
+CRGBArray<NUM_LEDS> leds;
+uint8_t hue = 0;
+
+// LED illumination
+void timerLED(){
+	leds.fill_rainbow(hue++);
+}
+
 // Initialize debouncer
 void debouncer_init() {
 	for (uint8_t i = 0; i < buttonCount; i++) {
@@ -76,9 +96,18 @@ void joystick_init() {
 	Joystick.setHatSwitch(0, hatPattern[AXIS_RANDE_HOME][AXIS_RANDE_HOME]);
 }
 
+// Initialize LED
+void led_initialize() {
+	FastLED.addLeds<LED_TYPE, LED_PIN>(leds, NUM_LEDS);
+	FastLED.setBrightness(LED_BRIGHTNESS);
+	FlexiTimer2::set(TIMER_INTERVAL, timerLED);
+	FlexiTimer2::start();
+}
+
 void setup() {
 	debouncer_init();
 	joystick_init();
+	led_initialize();
 }
 
 void loop() {
@@ -117,5 +146,6 @@ void loop() {
 			Joystick.setRzAxis(AXIS_RANDE_HOME);
 			Joystick.setZAxis(AXIS_RANDE_HOME);
 		}
+		FastLED.show();
 	}
 }

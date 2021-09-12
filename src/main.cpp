@@ -8,7 +8,7 @@ void timerLED(){
 
 // Initialize debouncer
 void debouncer_init() {
-	for (uint8_t i = 0; i < BUTTON_ALL; i++) {
+	for (uint8_t i = 0; i < NUM_BUTTON_ALL; i++) {
 		debouncer[i] = Bounce();
 		debouncer[i].attach(buttonPin[i], INPUT_PULLUP);
 		debouncer[i].interval(DEBOUNCE_TIME);
@@ -48,10 +48,10 @@ void loop() {
 	uint8_t direction[2] = {AXIS_RANDE_HOME, AXIS_RANDE_HOME};
 
 	while(1) {
-		for (uint8_t i = 0; i < BUTTON_ALL; i++) {
+		for (uint8_t i = 0; i < NUM_BUTTON_ALL; i++) {
 			debouncer[i].update();
 		}
-		for (uint8_t i = 0; i < BUTTON_NORMAL; i++) {
+		for (uint8_t i = 0; i < NUM_BUTTON_NORMAL; i++) {
 			Joystick.setButton(i, !debouncer[i].read());
 		}
 		

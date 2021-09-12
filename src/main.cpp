@@ -1,4 +1,4 @@
-#include "FightStick.h"
+#include "FightStick.hpp"
 
 // LED illumination
 void timerLED(){

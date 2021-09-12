@@ -30,7 +30,7 @@ void joystick_init() {
 }
 
 // Initialize LED
-void led_initialize() {
+void led_init() {
 	FastLED.addLeds<LED_TYPE, LED_PIN>(leds, NUM_LEDS);
 	FastLED.setBrightness(LED_BRIGHTNESS);
 	FlexiTimer2::set(TIMER_INTERVAL, timerLED);
@@ -40,7 +40,7 @@ void led_initialize() {
 void setup() {
 	debouncer_init();
 	joystick_init();
-	led_initialize();
+	led_init();
 }
 
 void loop() {

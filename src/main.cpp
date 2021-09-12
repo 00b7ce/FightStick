@@ -1,77 +1,111 @@
 #include <Arduino.h>
 #include <Joystick.h>
 #include <Bounce2.h>
+#include <string.h>
+
+#define JOYSTICK_BUTTON_COUNT     13  // Normal input button
+#define JOYSTICK_DIRECTIRON_COUNT  4  // Direction input button(up, down, left, right)
+#define JOYSTICK_LAYER_COUNT       2  // Layer button for switching direction input type
+
+#define AXIS_RANGE_MIN  0
+#define AXIS_RANDE_HOME 1
+#define AXIS_RANGE_MAX  2
+
+#define DIRECTION_LEFT  (JOYSTICK_BUTTON_COUNT + 0)
+#define DIRECTION_DOWN  (JOYSTICK_BUTTON_COUNT + 1)
+#define DIRECTION_RIGHT (JOYSTICK_BUTTON_COUNT + 2)
+#define DIRECTION_UP    (JOYSTICK_BUTTON_COUNT + 3)
+
+#define AXIS_X 1
+#define AXIS_Y 0
+
+#define DEBOUNCE_TIME 2
 
 // button assign const
-const uint8_t buttonCount = 13;
-const uint8_t directionCount = 4;
-const uint8_t buttonPin[buttonCount] = {12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0};
-const uint8_t directionPin[directionCount] = {20, 21, 22, 23};
-const uint8_t lsPin = 14;
-const uint8_t rsPin = 15;
+const uint8_t buttonCount = JOYSTICK_BUTTON_COUNT + JOYSTICK_DIRECTIRON_COUNT + JOYSTICK_LAYER_COUNT;
+const uint8_t buttonPin[buttonCount] = {12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 20, 21, 22, 23, 14, 15};
+const uint8_t layerLS = JOYSTICK_BUTTON_COUNT + JOYSTICK_DIRECTIRON_COUNT;
+const uint8_t layerRS = JOYSTICK_BUTTON_COUNT + JOYSTICK_DIRECTIRON_COUNT + 1;
+// Hatswitch direction Pattern
+const int16_t hatPattern[3][3] = {{315,   0,  45},
+								  								{270,  -1,  90},
+								  								{225, 180, 135}};
 
 // debounce const
-Bounce buttonDebouncer[buttonCount];
-Bounce directionDebouncer[directionCount];
-const uint8_t debounceTime = 2;
+Bounce debouncer[buttonCount];
 
+// Joystick
 Joystick_ Joystick = Joystick_(
-  JOYSTICK_DEFAULT_REPORT_ID,       // hidReportId 
-  JOYSTICK_TYPE_GAMEPAD,            // joystickType 
-  buttonCount,              // buttonCount 
-  1,                                // hatSwitchCount 
-  true,                             // includeXAxis
-  true,                             // includeYAxis 
-  true,                             // includeZAxis 
-  false,                            // includeRxAxis
-  false,                            // includeRyAxis
-  true,                             // includeRzAxis
-  false,                            // includeRudder
-  false,                            // includeThrottle
-  false,                            // includeAccelerator
-  false,                            // includeBrake
-  false                             // includeSteering
+	JOYSTICK_DEFAULT_REPORT_ID,       // hidReportId 
+	JOYSTICK_TYPE_GAMEPAD,            // joystickType 
+	JOYSTICK_BUTTON_COUNT,            // buttonCount 
+	1,                                // hatSwitchCount 
+	true,                             // includeXAxis
+	true,                             // includeYAxis 
+	true,                             // includeZAxis 
+	false,                            // includeRxAxis
+	false,                            // includeRyAxis
+	true,                             // includeRzAxis
+	false,                            // includeRudder
+	false,                            // includeThrottle
+	false,                            // includeAccelerator
+	false,                            // includeBrake
+	false                             // includeSteering
 );
 
+// Initialize debouncer
+void debouncer_init() {
+	for (uint8_t i = 0; i < buttonCount; i++) {
+		debouncer[i] = Bounce();
+		debouncer[i].attach(buttonPin[i], INPUT_PULLUP);
+		debouncer[i].interval(DEBOUNCE_TIME);
+	}
+}
+
+// Initialize joystick
+void joystick_init() {
+	Joystick.begin();
+	Joystick.setXAxisRange(AXIS_RANGE_MIN, AXIS_RANGE_MAX);
+	Joystick.setYAxisRange(AXIS_RANGE_MIN, AXIS_RANGE_MAX);
+	Joystick.setZAxisRange(AXIS_RANGE_MIN, AXIS_RANGE_MAX);
+	Joystick.setRzAxisRange(AXIS_RANGE_MIN, AXIS_RANGE_MAX);
+	Joystick.setXAxis(AXIS_RANDE_HOME);
+	Joystick.setYAxis(AXIS_RANDE_HOME);
+	Joystick.setZAxis(AXIS_RANDE_HOME);
+	Joystick.setRzAxis(AXIS_RANDE_HOME);
+	Joystick.setHatSwitch(0, hatPattern[AXIS_RANDE_HOME][AXIS_RANDE_HOME]);
+}
+
 void setup() {
-  for (uint8_t i = 0; i < buttonCount; i++) {
-    buttonDebouncer[i] = Bounce();
-    buttonDebouncer[i].attach(buttonPin[i], INPUT_PULLUP);
-    buttonDebouncer[i].interval(debounceTime);
-    buttonDebouncer[i].update();
-  }
-
-  for (uint8_t i = 0; i < directionCount; i++) {
-    directionDebouncer[i] = Bounce();
-    directionDebouncer[i].attach(directionPin[i], INPUT_PULLUP);
-    directionDebouncer[i].interval(debounceTime);
-    directionDebouncer[i].update();
-  }
-
-  pinMode(lsPin, INPUT_PULLUP);
-  pinMode(rsPin, INPUT_PULLUP);
-
-  Joystick.begin();
-  Joystick.setXAxisRange(0, 2);
-  Joystick.setYAxisRange(0, 2);
-  Joystick.setZAxisRange(0, 2);
-  Joystick.setRzAxisRange(0, 2);
-  Joystick.setXAxis(1);
-  Joystick.setYAxis(1);
-  Joystick.setZAxis(1);
-  Joystick.setRzAxis(1);
-  Joystick.setHatSwitch(0, -1);
+	debouncer_init();
+	joystick_init();
 }
 
 void loop() {
-  while(1) {
-    for (uint8_t i = 0; i < buttonCount; i++) {
-      buttonDebouncer[i].update();
-      Joystick.setButton(i, !buttonDebouncer[i].read());
-    }
-    for (uint8_t i = 0; i < directionCount; i++) {
-      directionDebouncer[i].update();
-    }
-    // ToDo:方向入力の判定
-  }
+
+	uint8_t direction[2] = {AXIS_RANDE_HOME, AXIS_RANDE_HOME};
+
+	while(1) {
+		for (uint8_t i = 0; i < buttonCount; i++) {
+			debouncer[i].update();
+		}
+		for (uint8_t i = 0; i < JOYSTICK_BUTTON_COUNT; i++) {
+			Joystick.setButton(i, !debouncer[i].read());
+		}
+		
+		direction[AXIS_Y] = AXIS_RANDE_HOME - !debouncer[DIRECTION_UP].read()   + !debouncer[DIRECTION_DOWN].read();
+		direction[AXIS_X] = AXIS_RANDE_HOME - !debouncer[DIRECTION_LEFT].read() + !debouncer[DIRECTION_RIGHT].read();
+		
+		if (!debouncer[layerLS].read()) {
+			Joystick.setYAxis(direction[AXIS_X]);
+			Joystick.setXAxis(direction[AXIS_Y]);
+		}
+		else if (!debouncer[layerRS].read()) {
+			Joystick.setRzAxis(direction[AXIS_X]);
+			Joystick.setZAxis(direction[AXIS_Y]);
+		}
+		else {
+			Joystick.setHatSwitch(0, hatPattern[direction[AXIS_X]][direction[AXIS_Y]]);
+		}
+	}
 }

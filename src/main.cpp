@@ -99,13 +99,23 @@ void loop() {
 		if (!debouncer[layerLS].read()) {
 			Joystick.setYAxis(direction[AXIS_X]);
 			Joystick.setXAxis(direction[AXIS_Y]);
+			Joystick.setRzAxis(AXIS_RANDE_HOME);
+			Joystick.setZAxis(AXIS_RANDE_HOME);
+			Joystick.setHatSwitch(0, hatPattern[AXIS_RANDE_HOME][AXIS_RANDE_HOME]);
 		}
 		else if (!debouncer[layerRS].read()) {
 			Joystick.setRzAxis(direction[AXIS_X]);
 			Joystick.setZAxis(direction[AXIS_Y]);
+			Joystick.setYAxis(AXIS_RANDE_HOME);
+			Joystick.setXAxis(AXIS_RANDE_HOME);
+			Joystick.setHatSwitch(0, hatPattern[AXIS_RANDE_HOME][AXIS_RANDE_HOME]);
 		}
 		else {
 			Joystick.setHatSwitch(0, hatPattern[direction[AXIS_X]][direction[AXIS_Y]]);
+			Joystick.setYAxis(AXIS_RANDE_HOME);
+			Joystick.setXAxis(AXIS_RANDE_HOME);
+			Joystick.setRzAxis(AXIS_RANDE_HOME);
+			Joystick.setZAxis(AXIS_RANDE_HOME);
 		}
 	}
 }

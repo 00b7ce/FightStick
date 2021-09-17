@@ -31,7 +31,12 @@ void led_gradient() {
 	}
 }
 
-uint8_t ledMode = 2;
+void led_breath() {
+	float dV = ((exp(sin(millis()/2000.0*PI)) -0.36787944) * 108.0);
+	fill_solid(leds, NUM_LEDS, CHSV(ih, is, dV));
+}
+
+uint8_t ledMode = 3;
 void timerLED(){
 	switch (ledMode) {
 	case 0:
@@ -44,6 +49,7 @@ void timerLED(){
 		led_gradient();
 		break;	
 	case 3:
+		led_breath();
 		break;
 	default:
 		break;

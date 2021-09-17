@@ -16,16 +16,16 @@ CRGBPalette16 currentPalette = defaultPalette;
 // LED illumination
 void led_rainbow() {
 	static uint8_t hue = 0;
-	leds.fill_rainbow(hue++);
+	fill_rainbow(leds, NUM_LEDS, hue++);
 }
 
 void led_solid() {
-	leds.fill_solid(CHSV(ih, is, iv));
+	fill_solid(leds, NUM_LEDS, CHSV(ih, is, iv));
 }
 
 void led_gradient() {
 	static float offset = 0;
-	for (uint16_t i = 0; i < NUM_LEDS; i++) {
+	for (uint8_t i = 0; i < NUM_LEDS; i++) {
 		leds[i] = ColorFromPalette(currentPalette, (i * 255) / NUM_LEDS + offset);
 		offset += 0.2;
 	}
@@ -138,8 +138,7 @@ void loop() {
 			if (!debouncer[LEDSETTING_SAT_MINUS].read()) is++;
 			if (!debouncer[LEDSETTING_VAL_PLUS].read())  iv--;
 			if (!debouncer[LEDSETTING_VAL_MINUS].read()) iv++;
-			CRGBPalette16 newPalette = {CHSV(ih, is, iv), CHSV(0, 0, iv), CHSV(ih, is, iv), CHSV(ih, is, iv)};
-			currentPalette = newPalette;
+			currentPalette = CRGBPalette16(CHSV(ih, is, iv), CHSV(0, 0, iv), CHSV(ih, is, iv), CHSV(ih, is, iv));
 			break;
 		default:
 			break;

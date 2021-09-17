@@ -24,7 +24,7 @@
 // Axis range 
 enum {
 	AXIS_RANGE_MIN,
-	AXIS_RANDE_HOME,
+	AXIS_RANGE_HOME,
 	AXIS_RANGE_MAX
 };
 // Specific button number in array

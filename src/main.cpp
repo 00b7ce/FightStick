@@ -138,7 +138,7 @@ void loop() {
 			if (!debouncer[LEDSETTING_SAT_MINUS].read()) is++;
 			if (!debouncer[LEDSETTING_VAL_PLUS].read())  iv--;
 			if (!debouncer[LEDSETTING_VAL_MINUS].read()) iv++;
-			CRGBPalette16 newPalette = {CHSV(ih, is, iv), CHSV(0, 0, 255), CHSV(ih, is, iv), CHSV(ih, is, iv)};
+			CRGBPalette16 newPalette = {CHSV(ih, is, iv), CHSV(0, 0, iv), CHSV(ih, is, iv), CHSV(ih, is, iv)};
 			currentPalette = newPalette;
 			break;
 		default:

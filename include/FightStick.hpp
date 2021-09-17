@@ -42,6 +42,15 @@ enum {
 	AXIS_X
 };
 
+enum {
+	LEDSETTING_HUE_PLUS,
+	LEDSETTING_HUE_MINUS,
+	LEDSETTING_SAT_PLUS,
+	LEDSETTING_SAT_MINUS,
+	LEDSETTING_VAL_PLUS,
+	LEDSETTING_VAL_MINUS,
+};
+
 // Pin assignment settings for all buttons.
 // Normal button(1), ... , Normal button(n), Direction button(1), ... , Direction button(n), Layer button(1), ... Layer button(n)
 const uint8_t buttonPin[NUM_BUTTON_ALL] = {12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 20, 21, 22, 23, 14, 15};

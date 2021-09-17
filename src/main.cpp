@@ -1,15 +1,17 @@
 #include "FightStick.hpp"
 
-uint8_t red = 39;
-uint8_t green = 230;
-uint8_t blue = 214;
+uint8_t ih = 174;
+uint8_t is = 211;
+uint8_t iv = 230;
 
-CRGBPalette16 palette_color = {
-	CRGB(green, red, blue),
-	CRGB::White,
-	CRGB(green, red, blue),
-	CRGB(green, red, blue)
+CRGBPalette16 defaultPalette = {
+	CHSV(ih, is, iv),
+	CHSV(0, 0, 255),
+	CHSV(ih, is, iv),
+	CHSV(ih, is, iv)
 };
+
+CRGBPalette16 currentPalette = defaultPalette;
 
 // LED illumination
 void led_rainbow() {
@@ -18,18 +20,18 @@ void led_rainbow() {
 }
 
 void led_solid() {
-	leds.fill_solid(CRGB(green, red, blue));
+	leds.fill_solid(CHSV(ih, is, iv));
 }
 
 void led_gradient() {
 	static float offset = 0;
 	for (uint16_t i = 0; i < NUM_LEDS; i++) {
-		leds[i] = ColorFromPalette(palette_color, (i * 255) / NUM_LEDS + offset);
+		leds[i] = ColorFromPalette(currentPalette, (i * 255) / NUM_LEDS + offset);
 		offset += 0.2;
 	}
 }
 
-uint8_t led_mode = 0;
+uint8_t led_mode = 2;
 void timerLED(){
 	switch (led_mode) {
 	case 0:
@@ -130,7 +132,14 @@ void loop() {
 			if (!debouncer[DIRECTION_DOWN].read())	led_mode = 1;
 			if (!debouncer[DIRECTION_LEFT].read())	led_mode = 2;
 			if (!debouncer[DIRECTION_RIGHT].read())	led_mode = 3;
-			if (!debouncer[0].read())
+			if (!debouncer[LEDSETTING_HUE_PLUS].read())  ih--;
+			if (!debouncer[LEDSETTING_HUE_MINUS].read()) ih++;
+			if (!debouncer[LEDSETTING_SAT_PLUS].read())  is--;
+			if (!debouncer[LEDSETTING_SAT_MINUS].read()) is++;
+			if (!debouncer[LEDSETTING_VAL_PLUS].read())  iv--;
+			if (!debouncer[LEDSETTING_VAL_MINUS].read()) iv++;
+			CRGBPalette16 newPalette = {CHSV(ih, is, iv), CHSV(0, 0, 255), CHSV(ih, is, iv), CHSV(ih, is, iv)};
+			currentPalette = newPalette;
 			break;
 		default:
 			break;

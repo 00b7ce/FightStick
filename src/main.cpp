@@ -6,7 +6,7 @@ uint8_t iv = 230;
 
 CRGBPalette16 defaultPalette = {
 	CHSV(ih, is, iv),
-	CHSV(0, 0, 255),
+	CHSV( 0,  0, iv),
 	CHSV(ih, is, iv),
 	CHSV(ih, is, iv)
 };
@@ -31,9 +31,9 @@ void led_gradient() {
 	}
 }
 
-uint8_t led_mode = 2;
+uint8_t ledMode = 2;
 void timerLED(){
-	switch (led_mode) {
+	switch (ledMode) {
 	case 0:
 		led_rainbow();
 		break;
@@ -128,10 +128,10 @@ void loop() {
 			Joystick.setHatSwitch(0, hatPattern[AXIS_RANGE_HOME][AXIS_RANGE_HOME]);
 			break;
 		case 3:
-			if (!debouncer[DIRECTION_UP].read())	led_mode = 0;
-			if (!debouncer[DIRECTION_DOWN].read())	led_mode = 1;
-			if (!debouncer[DIRECTION_LEFT].read())	led_mode = 2;
-			if (!debouncer[DIRECTION_RIGHT].read())	led_mode = 3;
+			if (!debouncer[DIRECTION_UP].read())	ledMode = 0;
+			if (!debouncer[DIRECTION_DOWN].read())	ledMode = 1;
+			if (!debouncer[DIRECTION_LEFT].read())	ledMode = 2;
+			if (!debouncer[DIRECTION_RIGHT].read())	ledMode = 3;
 			if (!debouncer[LEDSETTING_HUE_PLUS].read())  ih--;
 			if (!debouncer[LEDSETTING_HUE_MINUS].read()) ih++;
 			if (!debouncer[LEDSETTING_SAT_PLUS].read())  is--;

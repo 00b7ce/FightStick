@@ -19,7 +19,7 @@
 #define LED_PIN  16                 // Pin for LED control
 #define LED_BRIGHTNESS 33           // Brightness of LEDs
 #define LED_TYPE WS2813             // Type of using LEDs
-#define TIMER_INTERVAL 25           // Interval for LED color control
+#define TIMER_INTERVAL 100           // Interval for LED color control
 
 // Axis range 
 enum {
@@ -73,5 +73,12 @@ Joystick_ Joystick = Joystick_(
 );
 
 CRGBArray<NUM_LEDS> leds;
+
+CRGBPalette16 palette_color = {
+	CRGB(230, 39, 214),
+	CRGB(255, 255, 255),
+	CRGB(230, 39, 214),
+	CRGB(230, 39, 214)
+};
 
 #endif

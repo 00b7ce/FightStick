@@ -1,9 +1,40 @@
 #include "FightStick.hpp"
 
 // LED illumination
-void timerLED(){
+void led_rainbow() {
 	static uint8_t hue = 0;
-	leds.fill_rainbow(hue++);
+	leds.fill_rainbow(hue+=4);
+}
+
+void led_solid() {
+	static uint8_t red = 39;
+	static uint8_t green = 230;
+	static uint8_t blue = 214;
+	leds.fill_solid(CRGB(green, red, blue));
+}
+
+void led_gradient() {
+	static uint8_t offset = 0;
+	for (uint16_t i = 0; i < NUM_LEDS; i++) {
+		leds[i] = ColorFromPalette(palette_color, (i * 255) / NUM_LEDS + offset++);
+	}
+}
+
+void timerLED(){
+	static uint8_t mode = 0;
+	switch (mode) {
+	case 0:
+		led_rainbow();
+		break;
+	case 1:
+		led_solid();
+		break;
+	case 2:
+		led_gradient();
+		break;	
+	default:
+		break;
+	}
 }
 
 // Initialize debouncer

@@ -106,29 +106,29 @@ void loop() {
 			Joystick.setButton(i, !debouncer[i].read());
 		}
 		
-		direction[AXIS_Y] = AXIS_RANGE_HOME - !debouncer[DIRECTION_UP].read()   + !debouncer[DIRECTION_DOWN].read();
-		direction[AXIS_X] = AXIS_RANGE_HOME - !debouncer[DIRECTION_LEFT].read() + !debouncer[DIRECTION_RIGHT].read();
+		direction[AXIS_Y] = (debouncer[DIRECTION_UP].read() && !debouncer[DIRECTION_DOWN].read()) + debouncer[DIRECTION_UP].read();
+		direction[AXIS_X] = debouncer[DIRECTION_LEFT].read() + !debouncer[DIRECTION_RIGHT].read();
 		
 		layer = !debouncer[LAYER_LS].read() + (!debouncer[LAYER_RS].read() << 1);
 
 		switch (layer) {
 		case 0:
-			Joystick.setHatSwitch(0, hatPattern[direction[AXIS_X]][direction[AXIS_Y]]);
+			Joystick.setHatSwitch(0, hatPattern[direction[AXIS_Y]][direction[AXIS_X]]);
 			Joystick.setYAxis(AXIS_RANGE_HOME);
 			Joystick.setXAxis(AXIS_RANGE_HOME);
 			Joystick.setRzAxis(AXIS_RANGE_HOME);
 			Joystick.setZAxis(AXIS_RANGE_HOME);
 			break;
 		case 1:
-			Joystick.setYAxis(direction[AXIS_X]);
-			Joystick.setXAxis(direction[AXIS_Y]);
+			Joystick.setYAxis(direction[AXIS_Y]);
+			Joystick.setXAxis(direction[AXIS_X]);
 			Joystick.setRzAxis(AXIS_RANGE_HOME);
 			Joystick.setZAxis(AXIS_RANGE_HOME);
 			Joystick.setHatSwitch(0, hatPattern[AXIS_RANGE_HOME][AXIS_RANGE_HOME]);
 			break;
 		case 2:
-			Joystick.setRzAxis(direction[AXIS_X]);
-			Joystick.setZAxis(direction[AXIS_Y]);
+			Joystick.setRzAxis(direction[AXIS_Y]);
+			Joystick.setZAxis(direction[AXIS_X]);
 			Joystick.setYAxis(AXIS_RANGE_HOME);
 			Joystick.setXAxis(AXIS_RANGE_HOME);
 			Joystick.setHatSwitch(0, hatPattern[AXIS_RANGE_HOME][AXIS_RANGE_HOME]);

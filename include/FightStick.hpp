@@ -48,8 +48,16 @@ enum {
 	LEDSETTING_SAT_PLUS,
 	LEDSETTING_SAT_MINUS,
 	LEDSETTING_VAL_PLUS,
-	LEDSETTING_VAL_MINUS,
+	LEDSETTING_VAL_MINUS
 };
+
+enum {
+	LEDMODE_RAINBOW,
+	LEDMODE_SOLID,
+	LEDMODE_GRADIENT,
+	LEDMODE_BREATH
+};
+
 
 // Pin assignment settings for all buttons.
 // Normal button(1), ... , Normal button(n), Direction button(1), ... , Direction button(n), Layer button(1), ... Layer button(n)

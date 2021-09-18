@@ -36,19 +36,19 @@ void led_breath() {
 	fill_solid(leds, NUM_LEDS, CHSV(ih, is, dV));
 }
 
-uint8_t ledMode = 3;
+uint8_t ledMode = LEDMODE_BREATH;
 void timerLED(){
 	switch (ledMode) {
-	case 0:
+	case LEDMODE_RAINBOW:
 		led_rainbow();
 		break;
-	case 1:
+	case LEDMODE_SOLID:
 		led_solid();
 		break;
-	case 2:
+	case LEDMODE_GRADIENT:
 		led_gradient();
 		break;	
-	case 3:
+	case LEDMODE_BREATH:
 		led_breath();
 		break;
 	default:
@@ -134,10 +134,10 @@ void loop() {
 			Joystick.setHatSwitch(0, hatPattern[AXIS_RANGE_HOME][AXIS_RANGE_HOME]);
 			break;
 		case 3:
-			if (!debouncer[DIRECTION_UP].read())	ledMode = 0;
-			if (!debouncer[DIRECTION_DOWN].read())	ledMode = 1;
-			if (!debouncer[DIRECTION_LEFT].read())	ledMode = 2;
-			if (!debouncer[DIRECTION_RIGHT].read())	ledMode = 3;
+			if (!debouncer[DIRECTION_UP].read())	ledMode = LEDMODE_RAINBOW;
+			if (!debouncer[DIRECTION_DOWN].read())	ledMode = LEDMODE_SOLID;
+			if (!debouncer[DIRECTION_LEFT].read())	ledMode = LEDMODE_GRADIENT;
+			if (!debouncer[DIRECTION_RIGHT].read())	ledMode = LEDMODE_BREATH;
 			if (!debouncer[LEDSETTING_HUE_PLUS].read())  ih--;
 			if (!debouncer[LEDSETTING_HUE_MINUS].read()) ih++;
 			if (!debouncer[LEDSETTING_SAT_PLUS].read())  is--;

@@ -96,7 +96,6 @@ void setup() {
 void loop() {
 
 	uint8_t direction[2] = {AXIS_RANGE_HOME, AXIS_RANGE_HOME};
-	uint8_t layer = 0;
 
 	while(1) {
 		for (uint8_t i = 0; i < NUM_BUTTON_ALL; i++) {
@@ -109,9 +108,7 @@ void loop() {
 		direction[AXIS_Y] = (debouncer[DIRECTION_UP].read() && !debouncer[DIRECTION_DOWN].read()) + debouncer[DIRECTION_UP].read();
 		direction[AXIS_X] = debouncer[DIRECTION_LEFT].read() + !debouncer[DIRECTION_RIGHT].read();
 		
-		layer = !debouncer[LAYER_LS].read() + (!debouncer[LAYER_RS].read() << 1);
-
-		switch (layer) {
+		switch (!debouncer[LAYER_LS].read() + (!debouncer[LAYER_RS].read() << 1)) {
 		case 0:
 			Joystick.setHatSwitch(0, hatPattern[direction[AXIS_Y]][direction[AXIS_X]]);
 			Joystick.setYAxis(AXIS_RANGE_HOME);
@@ -138,12 +135,12 @@ void loop() {
 			if (!debouncer[DIRECTION_DOWN].read())	ledMode = LEDMODE_SOLID;
 			if (!debouncer[DIRECTION_LEFT].read())	ledMode = LEDMODE_GRADIENT;
 			if (!debouncer[DIRECTION_RIGHT].read())	ledMode = LEDMODE_BREATH;
-			if (!debouncer[LEDSETTING_HUE_PLUS].read())  ih--;
-			if (!debouncer[LEDSETTING_HUE_MINUS].read()) ih++;
-			if (!debouncer[LEDSETTING_SAT_PLUS].read())  is--;
-			if (!debouncer[LEDSETTING_SAT_MINUS].read()) is++;
-			if (!debouncer[LEDSETTING_VAL_PLUS].read())  iv--;
-			if (!debouncer[LEDSETTING_VAL_MINUS].read()) iv++;
+			if (!debouncer[LEDSETTING_HUE_MINUS].read())				ih--;
+			if (!debouncer[LEDSETTING_HUE_PLUS].read())					ih++;
+			if (!debouncer[LEDSETTING_SAT_MINUS].read() && is >   0)	is--;
+			if (!debouncer[LEDSETTING_SAT_PLUS].read()  && is < 255)	is++;
+			if (!debouncer[LEDSETTING_VAL_MINUS].read() && iv >   0)	iv--;
+			if (!debouncer[LEDSETTING_VAL_PLUS].read()  && iv < 255)	iv++;
 			currentPalette = CRGBPalette16(CHSV(ih, is, iv), CHSV(0, 0, iv), CHSV(ih, is, iv), CHSV(ih, is, iv));
 			break;
 		default:

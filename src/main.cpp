@@ -47,6 +47,33 @@ void timerLED(){
 	}
 }
 
+void set_direction(int8_t mode, uint8_t* direction) {
+
+	int16_t hat = hatPattern[AXIS_RANGE_HOME][AXIS_RANGE_HOME];
+	uint8_t axis[4] = {AXIS_RANGE_HOME, AXIS_RANGE_HOME, AXIS_RANGE_HOME, AXIS_RANGE_HOME};
+
+	switch (mode) {
+	case 0:
+		hat = hatPattern[direction[AXIS_Y]][direction[AXIS_X]];
+		break;
+	case 1:
+		axis[AXIS_X] = direction[AXIS_X];
+		axis[AXIS_Y] = direction[AXIS_Y];
+		break;
+	case 2:
+		axis[AXIS_Z]  = direction[AXIS_X];
+		axis[AXIS_RZ] = direction[AXIS_Y];
+		break;
+	default:
+		break;
+	}
+	Joystick.setHatSwitch(0, hat);
+	Joystick.setXAxis(axis[AXIS_X]);
+	Joystick.setYAxis(axis[AXIS_Y]);
+	Joystick.setZAxis(axis[AXIS_Z]);
+	Joystick.setRzAxis(axis[AXIS_RZ]);
+}
+
 // Initialize debouncer
 void debouncer_init() {
 	for (uint8_t i = 0; i < NUM_BUTTON_ALL; i++) {
@@ -63,11 +90,7 @@ void joystick_init() {
 	Joystick.setYAxisRange(AXIS_RANGE_MIN, AXIS_RANGE_MAX);
 	Joystick.setZAxisRange(AXIS_RANGE_MIN, AXIS_RANGE_MAX);
 	Joystick.setRzAxisRange(AXIS_RANGE_MIN, AXIS_RANGE_MAX);
-	Joystick.setXAxis(AXIS_RANGE_HOME);
-	Joystick.setYAxis(AXIS_RANGE_HOME);
-	Joystick.setZAxis(AXIS_RANGE_HOME);
-	Joystick.setRzAxis(AXIS_RANGE_HOME);
-	Joystick.setHatSwitch(0, hatPattern[AXIS_RANGE_HOME][AXIS_RANGE_HOME]);
+	set_direction(-1, NULL);
 }
 
 // Initialize LED
@@ -90,6 +113,7 @@ void setup() {
 void loop() {
 
 	uint8_t direction[2] = {AXIS_RANGE_HOME, AXIS_RANGE_HOME};
+	uint8_t layer = 0;
 
 	while(1) {
 		for (uint8_t i = 0; i < NUM_BUTTON_ALL; i++) {
@@ -102,27 +126,13 @@ void loop() {
 		direction[AXIS_Y] = (debouncer[DIRECTION_UP].read() && !debouncer[DIRECTION_DOWN].read()) + debouncer[DIRECTION_UP].read();
 		direction[AXIS_X] = debouncer[DIRECTION_LEFT].read() + !debouncer[DIRECTION_RIGHT].read();
 		
-		switch (!debouncer[LAYER_LS].read() + (!debouncer[LAYER_RS].read() << 1)) {
+		layer = !debouncer[LAYER_LS].read() + (!debouncer[LAYER_RS].read() << 1);
+
+		switch (layer) {
 		case 0:
-			Joystick.setHatSwitch(0, hatPattern[direction[AXIS_Y]][direction[AXIS_X]]);
-			Joystick.setYAxis(AXIS_RANGE_HOME);
-			Joystick.setXAxis(AXIS_RANGE_HOME);
-			Joystick.setRzAxis(AXIS_RANGE_HOME);
-			Joystick.setZAxis(AXIS_RANGE_HOME);
-			break;
 		case 1:
-			Joystick.setYAxis(direction[AXIS_Y]);
-			Joystick.setXAxis(direction[AXIS_X]);
-			Joystick.setRzAxis(AXIS_RANGE_HOME);
-			Joystick.setZAxis(AXIS_RANGE_HOME);
-			Joystick.setHatSwitch(0, hatPattern[AXIS_RANGE_HOME][AXIS_RANGE_HOME]);
-			break;
 		case 2:
-			Joystick.setRzAxis(direction[AXIS_Y]);
-			Joystick.setZAxis(direction[AXIS_X]);
-			Joystick.setYAxis(AXIS_RANGE_HOME);
-			Joystick.setXAxis(AXIS_RANGE_HOME);
-			Joystick.setHatSwitch(0, hatPattern[AXIS_RANGE_HOME][AXIS_RANGE_HOME]);
+			set_direction(layer, direction);
 			break;
 		case 3:
 			if (!debouncer[DIRECTION_UP].read())	ledMode = LEDMODE_RAINBOW;

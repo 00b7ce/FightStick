@@ -40,8 +40,10 @@ enum {
 };
 // Input axis
 enum {
+	AXIS_X,
 	AXIS_Y,
-	AXIS_X
+	AXIS_Z,
+	AXIS_RZ
 };
 
 enum {

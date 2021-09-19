@@ -27,7 +27,7 @@ void led_breath() {
 	fill_solid(leds, NUM_LEDS, CHSV(ih, is, dV));
 }
 
-void timerLED(uint8_t& mode){
+void timerLED(const uint8_t& mode){
 	switch (mode) {
 	case LEDMODE_RAINBOW:
 		led_rainbow();
@@ -46,7 +46,7 @@ void timerLED(uint8_t& mode){
 	}
 }
 
-void set_direction(int8_t mode, uint8_t* direction) {
+void set_direction(const int8_t& mode, uint8_t* direction) {
 
 	int16_t hat = hatPattern[AXIS_RANGE_HOME][AXIS_RANGE_HOME];
 	uint8_t axis[4] = {AXIS_RANGE_HOME, AXIS_RANGE_HOME, AXIS_RANGE_HOME, AXIS_RANGE_HOME};
@@ -108,7 +108,7 @@ void setup() {
 void loop() {
 
 	uint8_t direction[2] = {AXIS_RANGE_HOME, AXIS_RANGE_HOME};
-	uint8_t layer = 0;
+	int8_t  layer = 0;
 	uint8_t led_mode = LEDMODE_BREATH;
 
 	while(1) {

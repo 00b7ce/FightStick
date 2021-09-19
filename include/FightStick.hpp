@@ -4,6 +4,7 @@
 #include <Joystick.h>
 #include <Bounce2.h>
 #include <FastLED.h>
+#include <EEPROM.h>
 
 // Button num
 #define NUM_BUTTON_NORMAL 13        // Number of normal input button num(Recognized as a gamepad button)
@@ -16,9 +17,11 @@
 // LED
 #define NUM_LEDS 20                 // Number of LEDs of using LED strip
 #define LED_PIN  16                 // Pin for LED control
-#define LED_BRIGHTNESS 200          // Brightness of LEDs
+#define LED_BRIGHTNESS 150          // Brightness of LEDs
 #define LED_TYPE WS2813             // Type of using LEDs
 #define TIMER_INTERVAL 25           // Interval for LED color control
+
+#define EEPROM_ADDR_LEDPARAM 0		// 	Address of LED parameter in EEPROM
 
 #define GENERATE_PALETTE(HUE, SAT, VAL) CRGBPalette16(CHSV(HUE, SAT, VAL), CHSV(0, 0, VAL), CHSV(HUE, SAT, VAL), CHSV(HUE, SAT, VAL))
 

@@ -125,11 +125,6 @@ void loop() {
 		layer = !debouncer[LAYER_LS].read() + (!debouncer[LAYER_RS].read() << 1);
 
 		switch (layer) {
-		case 0:
-		case 1:
-		case 2:
-			set_direction(layer, direction);
-			break;
 		case 3:
 			if (!debouncer[DIRECTION_UP].read())	led_mode = LEDMODE_RAINBOW;
 			if (!debouncer[DIRECTION_DOWN].read())	led_mode = LEDMODE_SOLID;
@@ -144,6 +139,7 @@ void loop() {
 			currentPalette = GENERATE_PALETTE(ih, is, iv);
 			break;
 		default:
+			set_direction(layer, direction);
 			break;
 		}
 		EVERY_N_MILLIS(TIMER_INTERVAL) {

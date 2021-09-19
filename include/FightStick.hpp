@@ -21,6 +21,8 @@
 #define LED_TYPE WS2813             // Type of using LEDs
 #define TIMER_INTERVAL 25           // Interval for LED color control
 
+#define GENERATE_PALETTE(HUE, SAT, VAL) CRGBPalette16(CHSV(HUE, SAT, VAL), CHSV(0, 0, VAL), CHSV(HUE, SAT, VAL), CHSV(HUE, SAT, VAL))
+
 // Axis range 
 enum {
 	AXIS_RANGE_MIN,
@@ -90,5 +92,6 @@ Joystick_ Joystick = Joystick_(
 );
 
 CRGBArray<NUM_LEDS> leds;
+CRGBPalette16 currentPalette;
 
 #endif

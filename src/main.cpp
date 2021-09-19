@@ -4,15 +4,6 @@ uint8_t ih = 174;
 uint8_t is = 211;
 uint8_t iv = 230;
 
-CRGBPalette16 defaultPalette = {
-	CHSV(ih, is, iv),
-	CHSV( 0,  0, iv),
-	CHSV(ih, is, iv),
-	CHSV(ih, is, iv)
-};
-
-CRGBPalette16 currentPalette = defaultPalette;
-
 // LED illumination
 void led_rainbow() {
 	static uint8_t hue = 0;
@@ -83,6 +74,9 @@ void joystick_init() {
 void led_init() {
 	FastLED.addLeds<LED_TYPE, LED_PIN>(leds, NUM_LEDS);
 	FastLED.setBrightness(LED_BRIGHTNESS);
+
+	currentPalette = GENERATE_PALETTE(ih, is, iv);
+
 	FlexiTimer2::set(TIMER_INTERVAL, timerLED);
 	FlexiTimer2::start();
 }
@@ -141,7 +135,7 @@ void loop() {
 			if (!debouncer[LEDSETTING_SAT_PLUS].read()  && is < 255)	is++;
 			if (!debouncer[LEDSETTING_VAL_MINUS].read() && iv >   0)	iv--;
 			if (!debouncer[LEDSETTING_VAL_PLUS].read()  && iv < 255)	iv++;
-			currentPalette = CRGBPalette16(CHSV(ih, is, iv), CHSV(0, 0, iv), CHSV(ih, is, iv), CHSV(ih, is, iv));
+			currentPalette = GENERATE_PALETTE(ih, is, iv);
 			break;
 		default:
 			break;

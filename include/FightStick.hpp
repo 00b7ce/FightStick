@@ -102,6 +102,7 @@ Joystick_ Joystick = Joystick_(
 );
 
 CRGBArray<NUM_LEDS> leds;
+led_setting_t ledParam;
 CRGBPalette16 currentPalette;
 
 #endif

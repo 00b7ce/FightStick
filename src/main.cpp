@@ -1,8 +1,5 @@
 #include "FightStick.hpp"
 
-// led_setting_t ledParam = {LEDMODE_GRADIENT, 174, 211, 230};
-led_setting_t ledParam;
-
 // LED illumination
 void led_rainbow() {
 	static uint8_t hue = 0;
@@ -123,9 +120,7 @@ void setting_led() {
 			if (!debouncer[LEDSETTING_VAL_MINUS].read() && ledParam.iv >   0)	ledParam.iv--;
 			if (!debouncer[LEDSETTING_VAL_PLUS].read()  && ledParam.iv < 255)	ledParam.iv++;
 		}
-
 		currentPalette = GENERATE_PALETTE(ledParam.ih, ledParam.is, ledParam.iv);
-
 		EVERY_N_MILLIS(TIMER_INTERVAL) {
 			timerLED();
 			FastLED.show();
@@ -142,16 +137,13 @@ void loop() {
 	while(1) {
 		for (uint8_t i = 0; i < NUM_BUTTON_ALL; i++) {
 			debouncer[i].update();
+			if (i < NUM_BUTTON_NORMAL)  Joystick.setButton(i, !debouncer[i].read());
 		}
-		for (uint8_t i = 0; i < NUM_BUTTON_NORMAL; i++) {
-			Joystick.setButton(i, !debouncer[i].read());
-		}
-		
+
 		direction[AXIS_Y] = (debouncer[DIRECTION_UP].read() && !debouncer[DIRECTION_DOWN].read()) + debouncer[DIRECTION_UP].read();
 		direction[AXIS_X] = debouncer[DIRECTION_LEFT].read() + !debouncer[DIRECTION_RIGHT].read();
-		
 		layer = !debouncer[LAYER_LS].read() + (!debouncer[LAYER_RS].read() << 1);
-
+		
 		switch (layer) {
 		case 3:
 			setting_led();
@@ -162,7 +154,7 @@ void loop() {
 		}
 		EVERY_N_MILLIS(TIMER_INTERVAL) {
 			timerLED();
+			FastLED.show();
 		}
-		FastLED.show();
 	}
 }

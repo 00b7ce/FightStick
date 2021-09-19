@@ -4,7 +4,6 @@
 #include <Joystick.h>
 #include <Bounce2.h>
 #include <FastLED.h>
-#include <FlexiTimer2.h>
 
 // Button num
 #define NUM_BUTTON_NORMAL 13        // Number of normal input button num(Recognized as a gamepad button)

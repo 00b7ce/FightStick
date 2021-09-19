@@ -27,9 +27,8 @@ void led_breath() {
 	fill_solid(leds, NUM_LEDS, CHSV(ih, is, dV));
 }
 
-uint8_t ledMode = LEDMODE_BREATH;
-void timerLED(){
-	switch (ledMode) {
+void timerLED(uint8_t& mode){
+	switch (mode) {
 	case LEDMODE_RAINBOW:
 		led_rainbow();
 		break;
@@ -97,11 +96,7 @@ void joystick_init() {
 void led_init() {
 	FastLED.addLeds<LED_TYPE, LED_PIN>(leds, NUM_LEDS);
 	FastLED.setBrightness(LED_BRIGHTNESS);
-
 	currentPalette = GENERATE_PALETTE(ih, is, iv);
-
-	FlexiTimer2::set(TIMER_INTERVAL, timerLED);
-	FlexiTimer2::start();
 }
 
 void setup() {
@@ -114,6 +109,7 @@ void loop() {
 
 	uint8_t direction[2] = {AXIS_RANGE_HOME, AXIS_RANGE_HOME};
 	uint8_t layer = 0;
+	uint8_t led_mode = LEDMODE_BREATH;
 
 	while(1) {
 		for (uint8_t i = 0; i < NUM_BUTTON_ALL; i++) {
@@ -135,10 +131,10 @@ void loop() {
 			set_direction(layer, direction);
 			break;
 		case 3:
-			if (!debouncer[DIRECTION_UP].read())	ledMode = LEDMODE_RAINBOW;
-			if (!debouncer[DIRECTION_DOWN].read())	ledMode = LEDMODE_SOLID;
-			if (!debouncer[DIRECTION_LEFT].read())	ledMode = LEDMODE_GRADIENT;
-			if (!debouncer[DIRECTION_RIGHT].read())	ledMode = LEDMODE_BREATH;
+			if (!debouncer[DIRECTION_UP].read())	led_mode = LEDMODE_RAINBOW;
+			if (!debouncer[DIRECTION_DOWN].read())	led_mode = LEDMODE_SOLID;
+			if (!debouncer[DIRECTION_LEFT].read())	led_mode = LEDMODE_GRADIENT;
+			if (!debouncer[DIRECTION_RIGHT].read())	led_mode = LEDMODE_BREATH;
 			if (!debouncer[LEDSETTING_HUE_MINUS].read())				ih--;
 			if (!debouncer[LEDSETTING_HUE_PLUS].read())					ih++;
 			if (!debouncer[LEDSETTING_SAT_MINUS].read() && is >   0)	is--;
@@ -149,6 +145,9 @@ void loop() {
 			break;
 		default:
 			break;
+		}
+		EVERY_N_MILLIS(TIMER_INTERVAL) {
+			timerLED(led_mode);
 		}
 		FastLED.show();
 	}

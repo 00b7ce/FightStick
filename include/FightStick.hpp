@@ -16,7 +16,7 @@
 // LED
 #define NUM_LEDS 20                 // Number of LEDs of using LED strip
 #define LED_PIN  16                 // Pin for LED control
-#define LED_BRIGHTNESS 33           // Brightness of LEDs
+#define LED_BRIGHTNESS 200          // Brightness of LEDs
 #define LED_TYPE WS2813             // Type of using LEDs
 #define TIMER_INTERVAL 25           // Interval for LED color control
 

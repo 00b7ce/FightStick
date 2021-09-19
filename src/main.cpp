@@ -1,8 +1,6 @@
 #include "FightStick.hpp"
 
-uint8_t ih = 174;
-uint8_t is = 211;
-uint8_t iv = 230;
+led_setting_t ledParam = {LEDMODE_GRADIENT, 174, 211, 230};
 
 // LED illumination
 void led_rainbow() {
@@ -11,7 +9,7 @@ void led_rainbow() {
 }
 
 void led_solid() {
-	fill_solid(leds, NUM_LEDS, CHSV(ih, is, iv));
+	fill_solid(leds, NUM_LEDS, CHSV(ledParam.ih, ledParam.is, ledParam.iv));
 }
 
 void led_gradient() {
@@ -24,11 +22,11 @@ void led_gradient() {
 
 void led_breath() {
 	float dV = ((exp(sin(millis()/2000.0*PI)) -0.36787944) * 108.0);
-	fill_solid(leds, NUM_LEDS, CHSV(ih, is, dV));
+	fill_solid(leds, NUM_LEDS, CHSV(ledParam.ih, ledParam.is, dV));
 }
 
-void timerLED(const uint8_t& mode){
-	switch (mode) {
+void timerLED(){
+	switch (ledParam.mode) {
 	case LEDMODE_RAINBOW:
 		led_rainbow();
 		break;
@@ -96,7 +94,7 @@ void joystick_init() {
 void led_init() {
 	FastLED.addLeds<LED_TYPE, LED_PIN>(leds, NUM_LEDS);
 	FastLED.setBrightness(LED_BRIGHTNESS);
-	currentPalette = GENERATE_PALETTE(ih, is, iv);
+	currentPalette = GENERATE_PALETTE(ledParam.ih, ledParam.is, ledParam.iv);
 }
 
 void setup() {
@@ -109,7 +107,6 @@ void loop() {
 
 	uint8_t direction[2] = {AXIS_RANGE_HOME, AXIS_RANGE_HOME};
 	int8_t  layer = 0;
-	uint8_t led_mode = LEDMODE_BREATH;
 
 	while(1) {
 		for (uint8_t i = 0; i < NUM_BUTTON_ALL; i++) {
@@ -126,24 +123,24 @@ void loop() {
 
 		switch (layer) {
 		case 3:
-			if (!debouncer[DIRECTION_UP].read())	led_mode = LEDMODE_RAINBOW;
-			if (!debouncer[DIRECTION_DOWN].read())	led_mode = LEDMODE_SOLID;
-			if (!debouncer[DIRECTION_LEFT].read())	led_mode = LEDMODE_GRADIENT;
-			if (!debouncer[DIRECTION_RIGHT].read())	led_mode = LEDMODE_BREATH;
-			if (!debouncer[LEDSETTING_HUE_MINUS].read())				ih--;
-			if (!debouncer[LEDSETTING_HUE_PLUS].read())					ih++;
-			if (!debouncer[LEDSETTING_SAT_MINUS].read() && is >   0)	is--;
-			if (!debouncer[LEDSETTING_SAT_PLUS].read()  && is < 255)	is++;
-			if (!debouncer[LEDSETTING_VAL_MINUS].read() && iv >   0)	iv--;
-			if (!debouncer[LEDSETTING_VAL_PLUS].read()  && iv < 255)	iv++;
-			currentPalette = GENERATE_PALETTE(ih, is, iv);
+			if (!debouncer[DIRECTION_UP].read())								ledParam.mode = LEDMODE_RAINBOW;
+			if (!debouncer[DIRECTION_DOWN].read())								ledParam.mode = LEDMODE_SOLID;
+			if (!debouncer[DIRECTION_LEFT].read())								ledParam.mode = LEDMODE_GRADIENT;
+			if (!debouncer[DIRECTION_RIGHT].read())								ledParam.mode = LEDMODE_BREATH;
+			if (!debouncer[LEDSETTING_HUE_MINUS].read())						ledParam.ih--;
+			if (!debouncer[LEDSETTING_HUE_PLUS].read())							ledParam.ih++;
+			if (!debouncer[LEDSETTING_SAT_MINUS].read() && ledParam.is >   0)	ledParam.is--;
+			if (!debouncer[LEDSETTING_SAT_PLUS].read()  && ledParam.is < 255)	ledParam.is++;
+			if (!debouncer[LEDSETTING_VAL_MINUS].read() && ledParam.iv >   0)	ledParam.iv--;
+			if (!debouncer[LEDSETTING_VAL_PLUS].read()  && ledParam.iv < 255)	ledParam.iv++;
+			currentPalette = GENERATE_PALETTE(ledParam.ih, ledParam.is, ledParam.iv);
 			break;
 		default:
 			set_direction(layer, direction);
 			break;
 		}
 		EVERY_N_MILLIS(TIMER_INTERVAL) {
-			timerLED(led_mode);
+			timerLED();
 		}
 		FastLED.show();
 	}

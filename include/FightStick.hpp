@@ -61,6 +61,12 @@ enum {
 	LEDMODE_BREATH
 };
 
+typedef struct{
+	uint8_t mode;
+	uint8_t ih;
+	uint8_t is;
+	uint8_t iv;
+} led_setting_t;
 
 // Pin assignment settings for all buttons.
 // Normal button(1), ... , Normal button(n), Direction button(1), ... , Direction button(n), Layer button(1), ... Layer button(n)
